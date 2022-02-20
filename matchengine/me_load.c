@@ -1,5 +1,5 @@
 /*
- * Description: 
+ * Description:
  *     History: yang@haipo.me, 2017/04/04, create
  */
 
@@ -204,11 +204,11 @@ static int load_limit_order(json_t *params)
     if (mpd_cmp(amount, mpd_zero, &mpd_ctx) <= 0)
         goto error;
 
-    // price 
+    // price
     if (!json_is_string(json_array_get(params, 4)))
         goto error;
     price = decimal(json_string_value(json_array_get(params, 4)), market->money_prec);
-    if (price == NULL) 
+    if (price == NULL)
         goto error;
     if (mpd_cmp(price, mpd_zero, &mpd_ctx) <= 0)
         goto error;
@@ -238,7 +238,7 @@ static int load_limit_order(json_t *params)
     if (strlen(source) > SOURCE_MAX_LEN)
         goto error;
 
-    int ret = market_put_limit_order(false, NULL, market, user_id, side, amount, price, taker_fee, maker_fee, source);
+    int ret = market_put_limit_order(false, NULL, market, 0, user_id, side, amount, price, taker_fee, maker_fee, source);
 
     mpd_del(amount);
     mpd_del(price);
