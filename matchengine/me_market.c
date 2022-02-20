@@ -1,5 +1,5 @@
 /*
- * Description: 
+ * Description:
  *     History: yang@haipo.me, 2017/03/16, create
  */
 
@@ -563,7 +563,7 @@ static int execute_limit_bid_order(bool real, market_t *m, order_t *taker)
     return 0;
 }
 
-int market_put_limit_order(bool real, json_t **result, market_t *m, uint32_t user_id, uint32_t side, mpd_t *amount, mpd_t *price, mpd_t *taker_fee, mpd_t *maker_fee, const char *source)
+int market_put_limit_order(bool real, json_t **result, market_t *m, double timestamp, uint32_t user_id, uint32_t side, mpd_t *amount, mpd_t *price, mpd_t *taker_fee, mpd_t *maker_fee, const char *source)
 {
     if (side == MARKET_ORDER_SIDE_ASK) {
         mpd_t *balance = balance_get(user_id, BALANCE_TYPE_AVAILABLE, m->stock);
@@ -593,7 +593,7 @@ int market_put_limit_order(bool real, json_t **result, market_t *m, uint32_t use
     order->id           = ++order_id_start;
     order->type         = MARKET_ORDER_TYPE_LIMIT;
     order->side         = side;
-    order->create_time  = current_timestamp();
+    order->create_time  = timestamp ? timestamp : current_timestamp();
     order->update_time  = order->create_time;
     order->market       = strdup(m->name);
     order->source       = strdup(source);
