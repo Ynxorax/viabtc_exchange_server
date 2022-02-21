@@ -392,7 +392,7 @@ static int execute_limit_ask_order(bool real, market_t *m, order_t *taker)
         mpd_mul(ask_fee, deal, taker->taker_fee, &mpd_ctx);
         mpd_mul(bid_fee, amount, maker->maker_fee, &mpd_ctx);
 
-        taker->update_time = maker->update_time = current_timestamp();
+//        taker->update_time = maker->update_time = current_timestamp();
         uint64_t deal_id = ++deals_id_start;
         if (real) {
             append_order_deal_history(taker->update_time, deal_id, taker, MARKET_ROLE_TAKER, maker, MARKET_ROLE_MAKER, price, amount, deal, ask_fee, bid_fee);
@@ -493,7 +493,7 @@ static int execute_limit_bid_order(bool real, market_t *m, order_t *taker)
         mpd_mul(ask_fee, deal, maker->maker_fee, &mpd_ctx);
         mpd_mul(bid_fee, amount, taker->taker_fee, &mpd_ctx);
 
-        taker->update_time = maker->update_time = current_timestamp();
+//        taker->update_time = maker->update_time = current_timestamp();
         uint64_t deal_id = ++deals_id_start;
         if (real) {
             append_order_deal_history(taker->update_time, deal_id, maker, MARKET_ROLE_MAKER, taker, MARKET_ROLE_TAKER, price, amount, deal, ask_fee, bid_fee);
