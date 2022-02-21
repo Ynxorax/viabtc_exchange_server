@@ -167,26 +167,36 @@ static int load_update_balance(json_t *params)
 
 static int load_limit_order(json_t *params)
 {
-    if (json_array_size(params) != 8)
+    size_t index = 0;
+
+    if (json_array_size(params) < 8)
         return -__LINE__;
+
+    double timestamp = 0;
+    if (json_array_size(params) == 9) {
+        // timestamp
+        if (!json_is_integer(json_array_get(params, index)))
+            return reply_error_invalid_argument(ses, pkg);
+        timestamp = (double)json_integer_value(json_array_get(params, index++));
+    }
 
     // user_id
-    if (!json_is_integer(json_array_get(params, 0)))
+    if (!json_is_integer(json_array_get(params, index)))
         return -__LINE__;
-    uint32_t user_id = json_integer_value(json_array_get(params, 0));
+    uint32_t user_id = json_integer_value(json_array_get(params, index++));
 
     // market
-    if (!json_is_string(json_array_get(params, 1)))
+    if (!json_is_string(json_array_get(params, index)))
         return -__LINE__;
-    const char *market_name = json_string_value(json_array_get(params, 1));
+    const char *market_name = json_string_value(json_array_get(params, index++));
     market_t *market = get_market(market_name);
     if (market == NULL)
         return 0;
 
     // side
-    if (!json_is_integer(json_array_get(params, 2)))
+    if (!json_is_integer(json_array_get(params, index)))
         return -__LINE__;
-    uint32_t side = json_integer_value(json_array_get(params, 2));
+    uint32_t side = json_integer_value(json_array_get(params, index++));
     if (side != MARKET_ORDER_SIDE_ASK && side != MARKET_ORDER_SIDE_BID)
         return -__LINE__;
 
@@ -196,45 +206,45 @@ static int load_limit_order(json_t *params)
     mpd_t *maker_fee = NULL;
 
     // amount
-    if (!json_is_string(json_array_get(params, 3)))
+    if (!json_is_string(json_array_get(params, index)))
         goto error;
-    amount = decimal(json_string_value(json_array_get(params, 3)), market->stock_prec);
+    amount = decimal(json_string_value(json_array_get(params, index++)), market->stock_prec);
     if (amount == NULL)
         goto error;
     if (mpd_cmp(amount, mpd_zero, &mpd_ctx) <= 0)
         goto error;
 
     // price
-    if (!json_is_string(json_array_get(params, 4)))
+    if (!json_is_string(json_array_get(params, index)))
         goto error;
-    price = decimal(json_string_value(json_array_get(params, 4)), market->money_prec);
+    price = decimal(json_string_value(json_array_get(params, index++)), market->money_prec);
     if (price == NULL)
         goto error;
     if (mpd_cmp(price, mpd_zero, &mpd_ctx) <= 0)
         goto error;
 
     // taker fee
-    if (!json_is_string(json_array_get(params, 5)))
+    if (!json_is_string(json_array_get(params, index)))
         goto error;
-    taker_fee = decimal(json_string_value(json_array_get(params, 5)), market->fee_prec);
+    taker_fee = decimal(json_string_value(json_array_get(params, index++)), market->fee_prec);
     if (taker_fee == NULL)
         goto error;
     if (mpd_cmp(taker_fee, mpd_zero, &mpd_ctx) < 0 || mpd_cmp(taker_fee, mpd_one, &mpd_ctx) >= 0)
         goto error;
 
     // maker fee
-    if (!json_is_string(json_array_get(params, 6)))
+    if (!json_is_string(json_array_get(params, index)))
         goto error;
-    maker_fee = decimal(json_string_value(json_array_get(params, 6)), market->fee_prec);
+    maker_fee = decimal(json_string_value(json_array_get(params, index++)), market->fee_prec);
     if (maker_fee == NULL)
         goto error;
     if (mpd_cmp(maker_fee, mpd_zero, &mpd_ctx) < 0 || mpd_cmp(maker_fee, mpd_one, &mpd_ctx) >= 0)
         goto error;
 
     // source
-    if (!json_is_string(json_array_get(params, 7)))
+    if (!json_is_string(json_array_get(params, index)))
         goto error;
-    const char *source = json_string_value(json_array_get(params, 7));
+    const char *source = json_string_value(json_array_get(params, index++));
     if (strlen(source) > SOURCE_MAX_LEN)
         goto error;
 
