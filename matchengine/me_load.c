@@ -176,7 +176,7 @@ static int load_limit_order(json_t *params)
     if (json_array_size(params) == 9) {
         // timestamp
         if (!json_is_integer(json_array_get(params, index)))
-            return reply_error_invalid_argument(ses, pkg);
+            return -__LINE__;
         timestamp = (double)json_integer_value(json_array_get(params, index++));
     }
 
